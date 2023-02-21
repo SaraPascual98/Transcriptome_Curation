@@ -3,3 +3,6 @@ Improve the quality of transcriptomes coming from bioinformatic predictions usin
 
 
 ## Starting program
+
+
+Difference main to v1.0.0
