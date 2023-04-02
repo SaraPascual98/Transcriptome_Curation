@@ -9,55 +9,99 @@
 #SBATCH --mail-type=end #Envía un correo cuando el trabajo finaliza
 #SBATCH --mail-user=sara.pascuale@estudiante.uam.es #Dirección a la que se envía
 
+
+
 module load SAMtools/1.9-GCC-8.2.0-2.31.1 HISAT2/2.1.0-foss-2019a
-
-
 
 source /home/dcarrasco/miniconda3/bin/activate
 conda activate hisat2
 
 
-HAPLOTYPE=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/haplotype.txt) # Haplotype list
 PARAMS=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/samples_list.txt) # List with the names of all samples to align
-SAMPLES_RES=/home/dcarrasco/Resultados/Resultados_alineamiento
-INDEX_DIR=/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp
-TRIMMED_DATA=/home/arodriguez/data_all_experiments
+SAMPLES_RES_VRP=/home/dcarrasco/Resultados/Resultados_alineamiento/vrp 
+SAMPLES_RES_VBE=/home/dcarrasco/Resultados/Resultados_alineamiento/vbe
 
-if [[ ! -f $SAMPLES_RES/$PARAMS ]]
+INDEX_DIR_VRP=/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp
+INDEX_DIR_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vbe
+
+TRIMMED_DATA_VRP=/home/arodriguez/data_all_experiments/vrp
+TRIMMED_DATA_VBE=/home/arodriguez/data_all_experiments/vbe
+
+if [[ ! -f $SAMPLES_RES_VRP/$PARAMS ]]
 then
-        rm -rf $SAMPLES_RES/$HAPLOTYPE/$PARAMS
-        mkdir $SAMPLES_RES/$HAPLOTYPE/$PARAMS
+        rm -rf $SAMPLES_RES_VRP/$PARAMS
+        mkdir $SAMPLES_RES_VRP/$PARAMS
         echo "####-------------------Creating folders...---------------------####"
 fi
 
 
 echo $PARAMS
 
-echo $SAMPLES_RES/$HAPLOTYPE/$PARAMS/metrics_.txt
-echo $INDEX_DIR
-echo $TRIMMED_DATA/$HAPLOTYPE/$PARAMS/output_forward_paired.fq
-echo $TRIMMED_DATA/$HAOLOTYPE/$PARAMS/output_reverse_paired.fq
-echo $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.sam
+echo $SAMPLES_RES_VRP/$PARAMS/metrics_.txt
+echo $INDEX_DIR_VRP
+echo $TRIMMED_DATA_VRP/$PARAMS/output_forward_paired.fq
+echo $TRIMMED_DATA_VRP/$PARAMS/output_reverse_paired.fq
+echo $SAMPLES_RES_VRP/$PARAMS/alignment.sam
 
 
-cd $SAMPLES_RES/$HAPLOTYPE/$PARAMS
+cd $SAMPLES_RES_VRP/$PARAMS
 
 
-srun hisat2 --dta --mp 2,1 -x $INDEX_DIR \
--1 $TRIMMED_DATA/$HAPLOTYPE/$PARAMS/output_forward_paired.fq \
--2 $TRIMMED_DATA/$HAPLOTYPE/$PARAMS/output_reverse_paired.fq \
--S $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.sam \
---met-file $SAMPLES_RES/$HAPLOTYPE/$PARAMS/metrics.txt \
+srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VRP \
+-1 $TRIMMED_DATA_VRP/$PARAMS/output_forward_paired.fq \
+-2 $TRIMMED_DATA_VRP/$PARAMS/output_reverse_paired.fq \
+-S $SAMPLES_RES_VRP/$PARAMS/alignment.sam \
+--met-file $SAMPLES_RES_VRP/$PARAMS/metrics.txt \
 --min-intronlen 30 \
---novel-splicesite-outfile $SAMPLES_RES/$HAPLOTYPE/$PARAMS/novel-splicesites.txt \
---un-gz $SAMPLES_RES/$HAPLOTYPE/$PARAMS \
---al-gz $SAMPLES_RES/$HAPLOTYPE/$PARAMS \
---un-conc-gz $SAMPLES_RES/$HAPLOTYPE/$PARAMS \
---al-conc-gz $SAMPLES_RES/$HAPLOTYPE/$PARAMS
+--novel-splicesite-outfile $SAMPLES_RES_VRP/$PARAMS/novel-splicesites.txt \
+--un-gz $SAMPLES_RES_VRP/$PARAMS \
+--al-gz $SAMPLES_RES_VRP/$PARAMS \
+--un-conc-gz $SAMPLES_RES_VRP/$PARAMS \
+--al-conc-gz $SAMPLES_RES_VRP/$PARAMS
 
 conda activate samtools
 
-srun samtools view -S -b  $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.sam >  $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.bam
-rm -rf  $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.sam
-srun samtools sort $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment.bam -o $SAMPLES_RES/$HAPLOTYPE/$PARAMS/alignment_sorted.bam
+srun samtools view -S -b  $SAMPLES_RES_VRP/$PARAMS/alignment.sam >  $SAMPLES_RES_VRP/$PARAMS/alignment.bam
+rm -rf  $SAMPLES_RES_VRP/$PARAMS/alignment.sam
+srun samtools sort $SAMPLES_RES_VRP/$PARAMS/alignment.bam -o $SAMPLES_RES_VRP/$PARAMS/alignment_sorted.bam
+
+
+
+
+if [[ ! -f $SAMPLES_RES_VBE/$PARAMS ]]
+then
+        rm -rf $SAMPLES_RES_VBE/$PARAMS
+        mkdir $SAMPLES_RES_VBE/$PARAMS
+        echo "####-------------------Creating folders...---------------------####"
+fi
+
+
+echo $PARAMS
+
+echo $SAMPLES_RES_VBE/$PARAMS/metrics_.txt
+echo $INDEX_DIR_VBE
+echo $TRIMMED_DATA_VBE/$PARAMS/output_forward_paired.fq
+echo $TRIMMED_DATA_VBE/$PARAMS/output_reverse_paired.fq
+echo $SAMPLES_RES_VBE/$PARAMS/alignment.sam
+
+
+
+
+srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VBE \
+-1 $TRIMMED_DATA_VBE/$PARAMS/output_forward_paired.fq \
+-2 $TRIMMED_DATA_VBE/$PARAMS/output_reverse_paired.fq \
+-S $SAMPLES_RES_VBE/$PARAMS/alignment.sam \
+--met-file $SAMPLES_RES_VBE/$PARAMS/metrics.txt \
+--min-intronlen 30 \
+--novel-splicesite-outfile $SAMPLES_RES_VBE/$PARAMS/novel-splicesites.txt \
+--un-gz $SAMPLES_RES_VBE/$PARAMS \
+--al-gz $SAMPLES_RES_VBE/$PARAMS \
+--un-conc-gz $SAMPLES_RES_VBE/$PARAMS \
+--al-conc-gz $SAMPLES_RES_VBE/$PARAMS
+
+conda activate samtools
+
+srun samtools view -S -b  $SAMPLES_RES_VBE/$PARAMS/alignment.sam >  $SAMPLES_RES_VBE/$PARAMS/alignment.bam
+rm -rf  $SAMPLES_RES_VBE/$PARAMS/alignment.sam
+srun samtools sort $SAMPLES_RES_VBE/$PARAMS/alignment.bam -o $SAMPLES_RES_VBE/$PARAMS/alignment_sorted.bam
 
