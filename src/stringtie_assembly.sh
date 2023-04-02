@@ -21,8 +21,8 @@ PARAMS=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/samples_list.
 SAMPLES_RES_VRP=/home/dcarrasco/Resultados/Resultados_ensmablaje/vrp # Output directory for V.rupestris assembly
 SAMPLES_RES_VBE=/home/dcarrasco/Resultados/Resultados_ensamblaje/vbe # Output directory for V.berlandieri assembly
 
-GFF_VRP=/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3 # Annotation reference file in gff3 format
-GFF_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3 # Annotation reference file in gff3 format
+GFF_VRP=/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3 # V. rupestris annotation reference file in gff3 format
+GFF_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3 # V.berlandieri annotation reference file in gff3 format
 
 BAM_FILES_VRP=/home/dcarrasco/Resultados/Resultados_alineamiento/vrp # V.rupestris alignment results in BAM format
 BAM_FILES_VBE=/home/dcarrasco/Resultados/Resultados_alineamiento/vbe # V.berlandieri alignment results in BAM format
@@ -38,7 +38,7 @@ then
 fi
 
 
-# Assembly transcript of V.rupestris alignment
+# Assembly transcripts of V.rupestris alignment
 
 srun stringtie $BAM_FILE_VRP/$PARAMS/alignment_sorted.bam \
 -o $SAMPLES_RES_VRP/$PARAMS/new_annotation.gtf \
@@ -59,7 +59,7 @@ then
 fi
 
 
-# Assembly transcript of V.berlandiri alignment
+# Assembly transcripts of V.berlandiri alignment
 
 srun stringtie $BAM_FILE_VBE/$PARAMS/alignment_sorted.bam \
 -o $SAMPLES_RES_VBE/$PARAMS/new_annotation.gtf \
