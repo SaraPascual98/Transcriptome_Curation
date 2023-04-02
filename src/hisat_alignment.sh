@@ -71,6 +71,8 @@ srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VRP \
 
 conda activate samtools
 
+# convert the SAM format of the V.rupestris alignment to BAM format and sort it
+
 srun samtools view -S -b  $SAMPLES_RES_VRP/$PARAMS/alignment.sam >  $SAMPLES_RES_VRP/$PARAMS/alignment.bam
 rm -rf  $SAMPLES_RES_VRP/$PARAMS/alignment.sam
 srun samtools sort $SAMPLES_RES_VRP/$PARAMS/alignment.bam -o $SAMPLES_RES_VRP/$PARAMS/alignment_sorted.bam
@@ -110,7 +112,11 @@ srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VBE \
 --un-conc-gz $SAMPLES_RES_VBE/$PARAMS \
 --al-conc-gz $SAMPLES_RES_VBE/$PARAMS
 
+
+
 conda activate samtools
+
+# convert the SAM format of the V.berlandieri alignment to BAM format and sort it
 
 srun samtools view -S -b  $SAMPLES_RES_VBE/$PARAMS/alignment.sam >  $SAMPLES_RES_VBE/$PARAMS/alignment.bam
 rm -rf  $SAMPLES_RES_VBE/$PARAMS/alignment.sam
