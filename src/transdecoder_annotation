@@ -41,11 +41,11 @@ GENOME_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vb
 
 # Get homology annotation from blast and pfa
 
-blastp -query transdecoder_dir /home/dcarrasco/Resultados/transdecoder/VBE/longest_orfs.pep  \
+blastp -query /home/dcarrasco/Resultados/transdecoder/VBE/longest_orfs.pep  \
     -db uniprot_sprot.fasta  -max_target_seqs 1 \
     -outfmt 6 -evalue 1e-5 -num_threads 10 > blastp_vbe.outfmt6
 
-blastp -query transdecoder_dir//home/dcarrasco/Resultados/transdecoder/VRP/longest_orfs.pep  \
+blastp -query /home/dcarrasco/Resultados/transdecoder/VRP/longest_orfs.pep  \
     -db uniprot_sprot.fasta  -max_target_seqs 1 \
     -outfmt 6 -evalue 1e-5 -num_threads 10 > blastp_vrp.outfmt6   
     
