@@ -1,0 +1,39 @@
+library(dplyr)
+library(GenomicRanges)
+library(rtracklayer)
+
+
+# Load the gff3 files
+
+gff_vbe_new<- read.table("/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/VBE_new.gff3", header= FALSE, sep = "\t")
+gff_vrp_new <- read.table("/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/VRP_new.gff3", header= FALSE, sep = "\t")
+
+gff_vbe_ref<- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_origina/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3", header= FALSE, sep = "\t")
+gff_vrp_ref <- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_original/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3", header= FALSE, sep = "\t")
+
+
+# filter gff by genes
+
+genes_ref_vbe <- gff_vbe_ref[gff_vbe_refl$V3 == "gene",]
+genes_ref_vrp <- gff_vrp_ref[gff_vrp_ref$V3 == "gene", ]
+
+genes_new_vbe <- gff_vbe_new[gff_vbe_new$V3 == "gene", ]
+genes_new_vrp <- gff_vrp_new[gff_vrp_new$V3 == "gene", ]
+
+# make GRAnges object
+
+genes_ref_vbe_gr <- makeGRangesFromDataFrame(genes_ref_vbe)
+genes_ref_vrp_gr <- makeGRangesFromDataFrame(genes_ref_vrp)
+
+genes_new_vbe_gr <- makeGRangesFromDataFrame(genes_new_vbe)
+genes_new_vrp_gr <- makeGRangesFromDataFrame(genes_new_vrp)
+
+# retain only the genes from new gffs that not overlapping with reference 
+
+no_overlapping_genes_vbe <- subsetByOverlaps(genes_new_vbe_gr, genes_ref_vbe_gr, type=any, invert=TRUE)
+no_overlapping_genes_vrp <- subsetByOverlaps(genes_new_vrp_gr, genes_ref_vrp_gr, type=any, invert=TRUE)
+
+# save no overlapping genes as gff file
+
+export.gff3(no_overlapping_genes_vbe, "/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/new_genes_vbe.gff3")
+export.gff3(no_overlapping_genes_vrp, "/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/new_genes_vrp.gff3")
