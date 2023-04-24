@@ -32,6 +32,11 @@ This paper provides the transcriptome of the Richter 110 rootstock (*V.berlandie
 
 
 
+## Workflow
+
+
+
+
 ## Steps to follow
 
 
