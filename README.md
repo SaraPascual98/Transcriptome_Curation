@@ -24,7 +24,7 @@ improve the quality of transcriptomes from other non-model species coming from b
 &bull; [trimmomatic v.0.36](http://www.usadellab.org/cms/?page=trimmomatic) <br>
 
 
-
+## Folder structure
 
 
 
