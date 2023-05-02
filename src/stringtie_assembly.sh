@@ -70,7 +70,9 @@ srun stringtie $BAM_FILE_VBE/$PARAMS/alignment_sorted.bam \
 
 
 
-### Merge GTF of all samples resulting from de assembly
+### Merge GTF of all samples resulting from de assembly ###
+
+#Define new variables
 
 
 LIST_GTF_VRP=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/samples_vrp_path_list.txt) # List with the path of all samples of V.rupestris to merge 
