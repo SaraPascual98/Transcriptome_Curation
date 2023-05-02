@@ -17,7 +17,7 @@ conda activate transdecoder
 # Definition of variables
 
 TRANSCRIPTOME_VRP=/home/dcarrasco/Resultados/Resultados_ensmablaje/Vrp_merged/110R_v1.1.hap_Vrp.merged.gtf
-TRANSCRIPTOME_VBE=/home/dcarrasco/Resultados/Resultados_ensmablaje/Vrp_merged/110R_v1.1.hap_Vbe.merged.gtf 
+TRANSCRIPTOME_VBE=/home/dcarrasco/Resultados/Resultados_ensmablaje/Vbe_merged/110R_v1.1.hap_Vbe.merged.gtf 
 
 GENOME_VRP=/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp.fasta
 GENOME_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vbe.fasta
@@ -39,7 +39,7 @@ GENOME_VBE=/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vb
 /home/dcarrasco/Resultados/Codigo/TransDecoder/TransDecoder/util/TransDecoder.LongOrfs -t /home/dcarrasco/Resultados/transdecoder/transcripts_VBE.fasta > /home/dcarrasco/Resultados/transdecoder/VBE/
 
 
-# Get homology annotation from blast and pfa
+# Get homology annotation from blast and pfam
 
 blastp -query /home/dcarrasco/Resultados/transdecoder/VBE/longest_orfs.pep  \
     -db uniprot_sprot.fasta  -max_target_seqs 1 \
@@ -64,17 +64,19 @@ hmmsearch --cpu 8 -E 1e-10 --domtblout pfam.domtblout /path/to/Pfam-A.hmm /home/
 
 # generate a genome-based coding region annotation file
 
+cd /home/dcarrasco/Resultados/transdecoder/VRP
+
 /home/dcarrasco/Resultados/Codigo/TransDecoder/TransDecoder/util/cdna_alignment_orf_to_genome_orf.pl \
      transcripts_VRP.fasta.transdecoder.gff3 \
      transcripts_VRP.gff3 \
-     transcripts_VRP.fasta > transcripts_VRP.fasta.transdecoder.genome.gff3
+     transcripts_VRP.fasta > R110_hap_vrp.gff3
      
-     
+ cd /home/dcarrasco/Resultados/transdecoder/VBE    
      
 /home/dcarrasco/Resultados/Codigo/TransDecoder/TransDecoder/util/cdna_alignment_orf_to_genome_orf.pl \
      transcripts_VBE.fasta.transdecoder.gff3 \
      transcripts_VBE.gff3 \
-     transcripts_VBE.fasta> transcripts_VBE.fasta.transdecoder.genome.gff3
+     transcripts_VBE.fasta> R110_hap_vbe.gff3
      
      
      
