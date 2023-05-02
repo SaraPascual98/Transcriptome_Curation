@@ -68,3 +68,34 @@ srun stringtie $BAM_FILE_VBE/$PARAMS/alignment_sorted.bam \
 -C $SAMPLES_RES_VBE/$PARAMS/coverage_transcript.gtf \
 -A $SAMPLES_RES_VBE/$PARAMS/abundance_genes.gtf
 
+
+
+### Merge GTF of all samples resulting from de assembly
+
+
+LIST_GTF_VRP=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/samples_vrp_path_list.txt) # List with the path of all samples of V.rupestris to merge 
+LIST_GTF_VBE=$(sed -n ${SLURM_ARRAY_TASK_ID}p /home/dcarrasco/Resultados/samples_vbe_path_list.txt) # List with the path of all samples of V.berlandieri to merge
+
+ASSEMBLY_RES_VRP=/home/dcarrasco/Resultados/Resultados_ensmablaje/Vrp_merged # Output directory for V.rupestris merge
+ASSEMBLY_RES_VBE=/home/dcarrasco/Resultados/Resultados_ensmablaje/Vbe_merged # Output directory for V.berlandieri merge
+
+
+# Merge assemblies of V.rupestris
+
+srun stringtie $LIST_GTF_VRP \
+--merge -G $GFF_VRP \
+-o $ASSEMBLY_RES_VRP/110R_v1.1.hap_Vrp.merged.gtf \
+-T 10 \
+-l Vrp
+
+# Merge assemblies of V.berlandieri
+
+srun stringtie $LIST_GTF_VBE \
+--merge -G $GFF_VBE \
+-o $ASSEMBLY_RES_VBE/110R_v1.1.hap_Vbe.merged.gtf \
+-T 10 \
+-l Vbe
+
+
+
+
