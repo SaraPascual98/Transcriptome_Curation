@@ -62,7 +62,6 @@ srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VRP \
 -2 $TRIMMED_DATA_VRP/$PARAMS/output_reverse_paired.fq \
 -S $SAMPLES_RES_VRP/$PARAMS/alignment.sam \
 --met-file $SAMPLES_RES_VRP/$PARAMS/metrics.txt \
---min-intronlen 30 \
 --novel-splicesite-outfile $SAMPLES_RES_VRP/$PARAMS/novel-splicesites.txt \
 --un-gz $SAMPLES_RES_VRP/$PARAMS \
 --al-gz $SAMPLES_RES_VRP/$PARAMS \
@@ -105,7 +104,6 @@ srun hisat2 --dta --mp 2,1 -x $INDEX_DIR_VBE \
 -2 $TRIMMED_DATA_VBE/$PARAMS/output_reverse_paired.fq \
 -S $SAMPLES_RES_VBE/$PARAMS/alignment.sam \
 --met-file $SAMPLES_RES_VBE/$PARAMS/metrics.txt \
---min-intronlen 30 \
 --novel-splicesite-outfile $SAMPLES_RES_VBE/$PARAMS/novel-splicesites.txt \
 --un-gz $SAMPLES_RES_VBE/$PARAMS \
 --al-gz $SAMPLES_RES_VBE/$PARAMS \
