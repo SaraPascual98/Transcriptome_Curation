@@ -1,3 +1,6 @@
+
+#library import
+
 library(dplyr)
 library(GenomicRanges)
 library(rtracklayer)
@@ -5,11 +8,11 @@ library(rtracklayer)
 
 # Load the gff3 files
 
-gff_vbe_new<- read.table("/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/VBE_new.gff3", header= FALSE, sep = "\t")
-gff_vrp_new <- read.table("/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/VRP_new.gff3", header= FALSE, sep = "\t")
+gff_vrp_new<- read.table("/home/dcarrasco/Resultados/transdecoder/VRP/R110_hap_vrp.gff3", header= FALSE, sep = "\t") # read the new transcriptome of Vrp haplotype
+gff_vbe_new <- read.table("/home/dcarrasco/Resultados/transdecoder/VBE/R110_hap_vbe.gff3", header= FALSE, sep = "\t") # read the new transcriptome of Vbe haplotype
 
-gff_vbe_ref<- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_origina/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3", header= FALSE, sep = "\t")
-gff_vrp_ref <- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_original/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3", header= FALSE, sep = "\t")
+gff_vrp_ref<- read.table("/home/arodriguez/Data_110R/Vrp/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3", header= FALSE, sep = "\t") # read the reference transcriptome of Vrp haplotype
+gff_vbe_ref <- read.table("/home/arodriguez/Data_110R/Vbe/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3", header= FALSE, sep = "\t") # read the reference transcriptome of Vbe haplotype
 
 
 # filter gff by genes
@@ -35,5 +38,5 @@ no_overlapping_genes_vrp <- subsetByOverlaps(genes_new_vrp_gr, genes_ref_vrp_gr,
 
 # save no overlapping genes as gff file
 
-export.gff3(no_overlapping_genes_vbe, "/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/new_genes_vbe.gff3")
-export.gff3(no_overlapping_genes_vrp, "/media/sara/easystore/RESULTADOS_DEF/transcriptoma_new/new_genes_vrp.gff3")
+export.gff3(no_overlapping_genes_vbe, "/home/dcarrasco/Resultados/new_genes/new_genes_vbe.gff3")
+export.gff3(no_overlapping_genes_vrp, "/home/dcarrasco/Resultados/new_genes/new_genes_vrp.gff3")
