@@ -1,23 +1,25 @@
+# package import
+
 library(stringr)
 library(tidyr)
 library(AnnotationForge)
 
 
-# Read eggnog-mapper results and transcriptome gff files
+# Read eggnog-mapper results and transcriptome Vbe v1.1 and Vrp V1.1 gff files 
 
-egg_vbe_new <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/110_R_Vbe.emapper.annotations", sep= "\t", fill=TRUE)
-egg_vrp_new <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/110_R_Vrp.emapper.annotations", sep= "\t", fill=TRUE)
+egg_vbe_new <- read.table("/home/dcarrasco/Resultados/eggnog-mapper/Vbe_new/110_R_Vbe.emapper.annotations", sep= "\t", fill=TRUE) # functional annotation for vbe haplotype 
+egg_vrp_new <- read.table("/home/dcarrasco/Resultados/eggnog-mapper/Vrp_new/110_R_Vrp.emapper.annotations", sep= "\t", fill=TRUE) # functional annotation for vrp haplotype
 
-GFF_VRP_NEW <- read.table("/media/sara/easystore/RESULTADOS_DEF/trancriptoma_nuevo/transcripts_VBE_def.fasta.transdecoder.genome_blast.gff3", sep= "\t")
-GFF_VRP_NEW_gene <- GFF_VRP_NEW[GFF_VRP_NEW$V3 =="gene",]
-GFF_VRP_NEW_gene  <- GFF_VRP_NEW_gene [,-c(2:8)]
-GFF_VRP_NEW_gene$V9 <-str_extract(GFF_VRP_NEW_gene$V9, "(?<=\\=)(.*?)(?=\\;N)")
+GFF_VRP_NEW <- read.table("home/dcarrasco/Resultados/transdecoder/VRP/R110_hap_vrp.gff3", sep= "\t") # transcriptome of Vrp haplotype
+GFF_VRP_NEW_gene <- GFF_VRP_NEW[GFF_VRP_NEW$V3 =="gene",] # filter by gene
+GFF_VRP_NEW_gene  <- GFF_VRP_NEW_gene [,-c(2:8)] # get only the gene id and chromosome info
+GFF_VRP_NEW_gene$V9 <-str_extract(GFF_VRP_NEW_gene$V9, "(?<=\\=)(.*?)(?=\\;N)") # extract the gene id to match the results of the eggnog-mapper
 
 
-GFF_VBE_NEW <- read.table("/media/sara/easystore/RESULTADOS_DEF/trancriptoma_nuevo/transcripts_VRP_def.fasta.transdecoder.genome_blast.gff3", sep= "\t")
-GFF_VBE_NEW_gene <- GFF_VBE_NEW[GFF_VBE_NEW$V3 =="gene",]
-GFF_VBE_NEW_gene  <- GFF_VBE_NEW_gene [,-c(2:8)]
-GFF_VBE_NEW_gene$V9 <-str_extract(GFF_VBE_NEW_gene$V9, "(?<=\\=)(.*?)(?=\\;N)")
+GFF_VBE_NEW <- read.table("/home/dcarrasco/Resultados/transdecoder/VBE/R110_hap_vbe.gff3", sep= "\t") # transcriptome of Vbe haplotype
+GFF_VBE_NEW_gene <- GFF_VBE_NEW[GFF_VBE_NEW$V3 =="gene",] # filter by gene
+GFF_VBE_NEW_gene  <- GFF_VBE_NEW_gene [,-c(2:8)] # get only the gene id and chromosome info
+GFF_VBE_NEW_gene$V9 <-str_extract(GFF_VBE_NEW_gene$V9, "(?<=\\=)(.*?)(?=\\;N)") # extract the gene id to match the results of the eggnog-mapper
 
 
 # filter and retain only the genes that have GOs associated
@@ -29,9 +31,10 @@ egg_vrp_new_1 <- egg_vrp_new[egg_vrp_new$V10 != "-",]
 egg_vrp_new_1$V1 <- str_extract(vrp_new_1$V1, "(?<=\\=)(.*?)(?=\\;N)")
 
 
-# get the fSym, fGo and fChr files for V.rupestris
+# get the fSym ("GID", "SYMBOL", "GENENAME"), fGo ("GID", "GO", "IEA") and fChr ("GID", "CHROMOSOME") files for V.rupestris
 
-fSym_vrp_new <- cbind(egg_vrp_new_1$V1, egg_vrp_new_1$V2, egg_vrp_new_1$V8)
+
+fSym_vrp_new <- cbind(egg_vrp_new_1$V1, egg_vrp_new_1$V2, egg_vrp_new_1$V8) 
 colnames(fSym_vrp_new) <- c("GID", "SYMBOL", "GENENAME")
 
 fChr_vrp_new <- GFF_VRP_NEW_gene[GFF_VRP_NEW_gene$V9 %in% egg_vrp_new_1$V1,]
@@ -62,16 +65,16 @@ fGO_vbe_new <- data.frame(fGO_vbe_new)
 fGO_vbe_new <- separate_rows(fGO_vbe_new, GO, sep = ",")
 fGO_vbe_new$EVIDENCE <- "IEA"
 
-# Read GOs list from different plants
+# Read GOs list from different plants for filter GOs that are not in plants
 
-go_arab <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/GO_to_cross/Athaliana_mart_export.txt", sep= "\t", fill=TRUE)
-go_ptri <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/GO_to_cross/Ptrichocarpa_mart_export.txt", sep= "\t", fill=TRUE)
-go_vitis <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/GO_to_cross/vitis_mart_export.txt", sep= "\t", fill=TRUE)
-go_slyco <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/GO_to_cross/Slycopersicum_mart_export.txt", sep= "\t", fill=TRUE)
-go_zmays <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/GO_to_cross/Zmays_mart_export.txt", sep= "\t", fill=TRUE)
+go_arab <- read.table("/home/dcarrasco/Resultados/GO_to_cross/Athaliana_mart_export.txt", sep= "\t", fill=TRUE)
+go_ptri <- read.table("/home/dcarrasco/Resultados/GO_to_cross/Ptrichocarpa_mart_export.txt", sep= "\t", fill=TRUE)
+go_vitis <- read.table("/home/dcarrasco/Resultados/GO_to_cross/vitis_mart_export.txt", sep= "\t", fill=TRUE)
+go_slyco <- read.table("/home/dcarrasco/Resultados/GO_to_cross/Slycopersicum_mart_export.txt", sep= "\t", fill=TRUE)
+go_zmays <- read.table("/home/dcarrasco/Resultados/GO_to_cross/Zmays_mart_export.txt", sep= "\t", fill=TRUE)
 
 
-# Filter GOs of V.rupestris with the previous lists
+# Filter GOs from fsym, fChr and fGO files of V.rupestris with the previous lists
 
 fGO_vrp_new_1 <- fGO_vrp_new[fGO_vrp_new$GO %in% go_arab$V3 | fGO_vrp_new$GO %in% go_ptri$V3 | fGO_vrp_new$GO %in% go_vitis$V3 |
                                fGO_vrp_new$GO %in% go_slyco$V3 | fGO_vrp_new$GO %in% go_zmays$V3, ]
@@ -84,7 +87,7 @@ fSym_vrp_new_1  <- data.frame(fSym_vrp_new_1)
 fChr_vrp_new_1 <- data.frame(fChr_vrp_new_1)
 
 
-# Filter GOs of V.berlandieri with the previous lists
+# Filter GOs from fsym, fChr and fGO files of V.berlandieri with the previous lists
 
 fGO_vbe_new_1 <- fGO_vbe_new[fGO_vbe_new$GO %in% go_arab$V3 | fGO_vbe_new$GO %in% go_ptri$V3 | fGO_vbe_new$GO %in% go_vitis$V3 |
                                fGO_vbe_new$GO %in% go_slyco$V3 | fGO_vbe_new$GO %in% go_zmays$V3, ]
@@ -98,50 +101,130 @@ fChr_vbe_new_1 <- data.frame(fChr_vbe_new_1)
 
 
 
-
-# create gene annotation data package of V.berlandieri
-
-makeOrgPackage(gene_info=fSym_vbe_new_1, 
-                            go=fGO_vbe_new_1, 
-                            chromosome=fChr_vbe_new_1 , 
-                            version = "0.1", 
-                            maintainer = "sara <sara.pascuale@estudiante.uam.es>",
-                            author="sara <sara.pascuale@estudiante.uam.es>",
-                            tax_id= "103352",
-                            genus= "Vitis", 
-                            species = "berlandierigeneNew", 
-                            goTable = "go")
-                            
-# create gene annotation data package of V.rupestris
-
-makeOrgPackage(gene_info=fSym_vrp_new_1, 
-                            go=fGO_vrp_new_1, 
-                            chromosome=fChr_vrp_new_1, 
-                            version = "0.1", 
-                            maintainer = "sara <sara.pascuale@estudiante.uam.es>",
-                            author="sara <sara.pascuale@estudiante.uam.es>",
-                            tax_id= "103352",
-                            genus= "portainjerto", 
-                            species = "R110", 
-                            goTable = "go")
-                            
  
-# create gene annotation data package of R110
-
+# Join the files of the two haplotypes
 fGO_R110 <- rbind(fGO_vbe_new_1, fGO_vrp_new_1)
 fsym_R110 <- rbind(fSym_vbe_new_1, fSym_vrp_new_1)
 fChr_R110 <- rbind (fChr_vbe_new_1, fChr_vrp_new_1)
 
 
+
+# create gene annotation data package of R110 v.1.1
+
 makeOrgPackage(gene_info=fsym_R110, 
                             go=fGO_R110, 
                             chromosome=fChr_R110, 
+                            version = "1.1", 
+                            maintainer = "sara <sara.pascuale@estudiante.uam.es>",
+                            author="sara <sara.pascuale@estudiante.uam.es>",
+                            tax_id= "103352",
+                            genus= "Vitis", 
+                            species = "R110New", 
+                            goTable = "go")   
+                            
+
+
+
+# Read eggnog-mapper results and transcriptome Vbe v1.0 and Vrp V.1.0 gff files 
+
+
+egg_vbe_ref <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/resultados/vbe_old_gene/110_R_Vbe.emapper.annotations", sep= "\t", fill=TRUE)
+egg_vrp_ref <- read.table("/media/sara/easystore/RESULTADOS_DEF/eggnog_mapper/resultados/vrp_old_gene/110_R_Vrp.emapper.annotations", sep= "\t", fill=TRUE)
+
+GFF_VBE_OLD<- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_original/VITVix110R_v1.0.pseudomolecules.hap_Vbe.gff3", sep= "\t")
+GFF_VBE_OLD_gene <- GFF_VBE_OLD[GFF_VBE_OLD$V3 =="gene",]
+GFF_VBE_OLD_gene  <- GFF_VBE_OLD_gene[,-c(2:8)]
+GFF_VBE_OLD_gene$V9 <-str_extract(GFF_VBE_OLD_gene$V9, "(?<=\\=)(.*?)(?=\\;N)")
+
+GFF_VRP_OLD<- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_original/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3", sep= "\t")
+GFF_VRP_OLD_gene <- GFF_VRP_OLD[GFF_VRP_OLD$V3 =="gene",]
+GFF_VRP_OLD_gene  <- GFF_VRP_OLD_gene[,-c(2:8)]
+GFF_VRP_OLD_gene$V9 <-str_extract(GFF_VRP_OLD_gene$V9, "(?<=\\=)(.*?)(?=\\;N)")GFF_VRP_OLD<- read.table("/media/sara/easystore/RESULTADOS_DEF/genoma_original/VITVix110R_v1.0.pseudomolecules.hap_Vrp.gff3", sep= "\t")
+
+
+# filter and retain only the genes that have GOs associated
+
+egg_vbe_ref_1 <- egg_vbe_ref[egg_vbe_ref$V10 != "-",]
+egg_vrp_ref_1 <- egg_vrp_ref[egg_vrp_ref$V10 != "-",]
+
+# get the fSym ("GID", "SYMBOL", "GENENAME"), fGo ("GID", "GO", "EVIDENCE") and fChr ("GID", "CHROMOSOME") files for V.rupestris
+
+fSym_vrp_old <- cbind(egg_vrp_ref_1$V1, egg_vrp_ref_1$V2, egg_vrp_ref_1$V8)
+colnames(fSym_vrp_old) <- c("GID", "SYMBOL", "GENENAME")
+
+
+fChr_vrp_old <- GFF_VRP_OLD_gene[GFF_VRP_OLD_gene$V9 %in% fSym_vrp_old$GID,]
+fChr_vrp_old  <- cbind(fChr_vrp_old$V9, fChr_vrp_old$V1)
+colnames(fChr_vrp_old ) <- c("GID", "CHROMOSOME") 
+
+fGO_vrp_old <- cbind(egg_vrp_ref_1$V1, egg_vrp_ref_1$V10)
+colnames(fGO_vrp_old) <- c("GID", "GO") 
+fGO_vrp_old<- separate_rows(fGO_vrp_old, GO, sep = ",")
+fGO_vrp_old$EVIDENCE <- "IEA"
+
+
+
+# get the fSym, fGo and fChr files for V.berlandieri
+
+
+fSym_vbe_old <- cbind(egg_vbe_ref_1$V1, egg_vbe_ref_1$V2, egg_vbe_ref_1$V8)
+colnames(fSym_vbe_old) <- c("GID", "SYMBOL", "GENENAME")
+
+fChr_vbe_old <- GFF_VBE_OLD_gene[GFF_VBE_OLD_gene$V9 %in% fSym_vbe_old$GID,]
+fChr_vbe_old <- cbind(fChr_vbe_old$V9, fChr_vbe_old$V1)
+colnames(fChr_vbe_old) <- c("GID", "CHROMOSOME")  
+
+fGO_vbe_old <- cbind(egg_vbe_ref_1$V1, egg_vbe_ref_1$V10)
+colnames(fGO_vbe_old) <- c("GID", "GO")
+fGO_vbe_old<- separate_rows(fGO_vbe_old, GO, sep = ",")
+fGO_vbe_old$EVIDENCE <- "IEA"
+
+
+# Filter GOs of V.rupestris with the GOs from different plants
+
+fGO_vrp_old_1 <- fGO_vrp_old[fGO_vrp_old$GO %in% go_arab$V3 | fGO_vrp_old$GO %in% go_ptri$V3 | fGO_vrp_old$GO %in% go_vitis$V3 |
+                               fGO_vrp_old$GO %in% go_slyco$V3 | fGO_vrp_old$GO %in% go_zmays$V3, ]
+
+
+fSym_vrp_old_1 <- fSym_vrp_old[fSym_vrp_old$GID %in% fGO_vrp_old_1$GID,]
+fChr_vrp_old_1 <- fChr_vrp_old[fChr_vrp_old$GID %in% fGO_vrp_old_1$GID,]
+
+
+
+
+# Filter GOs of V.berlandieri from different plants
+
+fGO_vbe_old_1 <- fGO_vbe_old[fGO_vbe_old$GO %in% go_arab$V3 | fGO_vbe_old$GO %in% go_ptri$V3 | fGO_vbe_old$GO %in% go_vitis$V3 |
+                               fGO_vbe_old$GO %in% go_slyco$V3 | fGO_vbe_old$GO %in% go_zmays$V3, ]
+
+fSym_vbe_old_1 <- fSym_vbe_old[fSym_vbe_old$GID %in% fGO_vbe_old_1$GID,]
+fChr_vbe_old_1 <- fChr_vbe_old[fChr_vbe_old$GID %in% fGO_vbe_old_1$GID,]
+
+
+fsym_R110_ref <- rbind(fSym_vbe_old_1, fSym_vrp_old_1)
+fchr_R110_ref <-rbind(fChr_vbe_old_1, fChr_vrp_old_1)
+fGO_R110_ref <- rbind(fGO_vbe_old_1, fGO_vrp_old_1)
+
+# create gene annotation data package of R110 v1.0
+
+ makeOrgPackage(gene_info=fsym_R110_ref, 
+                            go=fGO_R110_ref, 
+                            chromosome=fchr_R110_ref, 
                             version = "0.1", 
                             maintainer = "sara <sara.pascuale@estudiante.uam.es>",
                             author="sara <sara.pascuale@estudiante.uam.es>",
                             tax_id= "103352",
-                            genus= "portainjerto", 
-                            species = "R110", 
-                            goTable = "go")   
-                            
- 
+                            genus= "Vitis", 
+                            species = "R110Ref", 
+                            goTable = "go")
+
+
+#install the previously created R110 v.1.1 and R110 v.1.0 transcriptome functional annotation packages
+
+install.packages("org.VR110New.eg.db")
+install.packages("org.VR110Ref.eg.db")
+
+
+
+
+
