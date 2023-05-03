@@ -219,12 +219,63 @@ fGO_R110_ref <- rbind(fGO_vbe_old_1, fGO_vrp_old_1)
                             goTable = "go")
 
 
-#install the previously created R110 v.1.1 and R110 v.1.0 transcriptome functional annotation packages
+#install and import the previously created R110 v.1.1 and R110 v.1.0 transcriptome functional annotation packages
 
-install.packages("org.VR110New.eg.db")
-install.packages("org.VR110Ref.eg.db")
+install.packages("org.VR110New.eg.db", repos=NULL)
+install.packages("org.VR110Ref.eg.db", respos=NULL)
+
+library(org.VR110New.eg.db)
+library(org.VR110Ref.eg.db)
 
 
 
 
+### FUNCTIONAL ENRICHMENT ANALYSIS OF NEW, SPECIFIC AND TOTAL GENES OF EACH HAPLOTYPE ###
 
+db_organism <- "org.VR110New.eg.db" 
+vector_variables <- c('BP') # Only for biological process ontology
+univ <- keys(org.VR110New.eg.db) # Use the annotation database from AnnotationForge
+
+list_dirs <- list.dirs('/home/dcarrasco/Resultados/gene_list') # directory with 3 subdirectories with a list of genes inside each one: total genes of each haplotype, specific and new genes of each haplotype
+
+for(x in list_dirs){
+  
+  if (x != 'home/dcarrasco/Resultados/gene_list'){
+    
+    if(file.exists(paste0(x,'/list_genes.txt'))){
+      a <- read.table(paste0(x,'/list_genes.txt'), sep='\t', header=TRUE)
+      for(y in vector_variables){
+        
+        b <- new('GOHyperGParams', geneIds=a, universeGeneIds=univ, annotation= org.VberlandieriRef.eg.db, ontology=y)
+        c <- hyperGTest(b)
+        d <- summary(c)
+        dir.create(paste0(x,'/GO_analysis'))
+        dir.create(paste0(x,'/GO_analysis/stats'))
+        dir.create(paste0(x, '/GO_analysis/images'))
+        write.table(d, file=paste0(x,'/GO_analysis/stats/',y, 'stats.txt'), sep='\t', row.names=FALSE)
+        
+        if(nrow(d)>1){
+          simMatrix <- eval(parse(text=paste0('calculateSimMatrix(d$GO', y,'ID, orgdb=db_organism, keytype="GO", ont=y,method="Rel")')))
+          print('simMatrix done! Starting scores step...')
+          eval(parse(text=paste0('scores <- setNames(-log10(d$Pvalue), d$GO', y,'ID)')))
+          print('Scores step done! Starting reduced terms step...')
+          reducedTerms <- reduceSimMatrix(simMatrix, scores=scores, threshold=0.7,orgdb=db_organism, keytype="GO")
+          print('reduceSimMatrix done! Plotting results...')
+          tiff(filename=paste0(x,'/GO_analysis/images/scatterplot_', y, '.tiff'), units='in', width=10, height=5, res=300)
+          print('Starting heatmap plot...')
+          tiff(filename=paste0(x,'/GO_analysis/images/heatmap_', y, '.tiff'), units='in', width=10, height=5, res=300)
+          heatmapPlot(simMatrix, reducedTerms, annotateParent=TRUE, annotationLabel="parentTerm", fontsize=4)
+          dev.off()
+          print('Heatmap plot done! Starting treemap plot...')
+          tiff(filename=paste0(x,'/GO_analysis/images/treemap_', y, '.tiff'), units='in', width=10, height=5, res=300)
+          treemapPlot(reducedTerms)  
+          dev.off()
+          print('Treemap plot done! Starting wordcloudPlot...')
+          tiff(filename=paste0(x,'/GO_analysis/images/wordcloudPlot_', y, '.tiff'), units='in', width=10, height=5, res=300)
+          wordcloudPlot(reducedTerms, min.freq=1, colors="black")
+          dev.off()
+        }
+      }
+    }
+  }
+}
